@@ -1,19 +1,57 @@
+import React from 'react';
 import {
   StyleSheet,
   Text,
   KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import React from 'react';
+
+import auth from '@react-native-firebase/auth';
 
 const LoginScreen = () => {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const handleSignIn = () => {
+    console.log(email, password);
+    auth() // Firebase auth instance
+      .signInWithEmailAndPassword(email, password) // Email and password
+      .then(
+        user => {
+          user ? Alert.alert('Login success') : Alert.alert('Login failed');
+        }, // Sign in success
+      ) // Sign in failure
+      .catch(error => {
+        Alert.alert('Login failed');
+        console.log(error); // Sign in failure
+      });
+  };
+  const handleRegister = () => {
+    console.log(email, password);
+    auth() // Firebase auth instance
+      .createUserWithEmailAndPassword(email, password) // Email and password
+      .then(
+        user => {
+          user
+            ? Alert.alert('Register success')
+            : Alert.alert('Register failed');
+        }, // Create User success
+      ) // Create User failure
+      .catch(error => {
+        Alert.alert('Register failed');
+        console.log(error); // Create User failure
+      });
+  };
+
   return (
     <KeyboardAvoidingView style={styles.container}>
       <Text style={styles.titleText}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder={'Email'}
+        onChangeText={text => setEmail(text)}
+        value={email}
         autoCapitalize={'none'}
         autoCorrect={false}
         keyboardType={'email-address'}
@@ -21,12 +59,14 @@ const LoginScreen = () => {
       <TextInput
         style={styles.input}
         placeholder={'password'}
+        onChangeText={text => setPassword(text)}
+        // value={password}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
         <Text style={styles.textButton}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registerButton}>
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.textButton}>Register</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
